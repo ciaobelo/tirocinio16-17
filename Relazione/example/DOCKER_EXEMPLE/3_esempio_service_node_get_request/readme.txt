@@ -1,0 +1,1 @@
+Lo script ovviamente va utilissato sucessivamente la fase di build per i lancio del server web node.

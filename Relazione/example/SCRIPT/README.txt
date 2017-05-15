@@ -1,0 +1,3 @@
+Tutti gli script prodotti hanno lo scopo di mostrare come automatizzare alcune attività di gestione di docker su sistemi distribuiti, senza installare tool aggiuntivi come docker machine o docker compose.
+
+In caso si voglia svolgere la procedura di creazione di uno sciame da remoto sarà necessario connettersi ad ogni nodo mediante sessione ssh su ogni macchina poi seguire la procedura descritta dagli script che si vogliono lanciare esempio quelli per l'aggiunta di un nuovo nodo o un nuovo master.

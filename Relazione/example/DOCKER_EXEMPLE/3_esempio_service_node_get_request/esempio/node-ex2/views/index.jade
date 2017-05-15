@@ -1,0 +1,31 @@
+html
+    head
+        title Hello World!
+        each s in scripts
+            scripts(src=s)
+        script(type='text/javascript').
+            console.log("Embedded script hello!")
+            function logSomething(){
+                console.log("Something here!");
+            }
+            function changeColor1(){
+                console.log("Changed color!!!!");
+                document.body.style.background = 'red';
+            }
+            function changeColor(color){
+                document.body.style.background = color;
+            }
+    body
+        h1 Hello from NODE JS
+        h2 An example of html template in NodeJs + Express + Jade
+        div
+            span.label A BUTTON
+            button(onclick='logSomething()') Click to do Something
+        div.input
+            button(onclick="changeColor('yellow')") YELLOW
+        div.input
+            button(onclick="changeColor('red')") RED
+        div
+            a(href="/hello") LINK TO HELLO
+        div
+            a(href="/guid") LINK TO GUID

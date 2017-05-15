@@ -1,0 +1,117 @@
+Per installare Docker su qualsiasi altra sistema *unix o win seguire la guida ufficiale di Docker \href{https://docs.docker.com/engine/installation/}{https://docs.docker.com/engine/installation/}.
+In questo sezione vi mostrerò la procedura per l'installazione dello strumento Docker CE (comiunity edition) su una macchina Ubuntu e come verificare se la procedura sia andata a buon fine. Al fine di non riscontrare problemifuturi è necessario verificare che la versione appena installata sia un varsione maggiore o uguale 1.13.\\Poichè nelle precedenti versioni non sono embedded in docker alcuni tool di automazione e la piattaforma di container scheduling swarmdi cui parleremo più tardi.
+\subsubsection {Prerequisiti minimi}Per installare Docker CE è \underline{necessario} avere installato una delle seguenti distribuzioni ubuntu a 64bit in altro casi guarda il link della documentazione ufficiale:
+\begin{itemize}
+	\item Yakkety 16.10
+	\item Xenial 16.04
+	\item Trusty 14.04
+\end{itemize}
+\textbf{1. Step}
+\begin{verbatim}
+
+   $ which curl
+
+#  If curl isn’t installed, install it after updating your manager:
+
+   $ sudo apt-get update
+   
+   $ sudo apt-get install curl
+
+#  Get the latest Docker package.
+
+   $ curl -fsSL https://get.docker.com/ | sh
+
+#  The system prompts you for your sudo password. Then, it downloads and installs Docker and its dependencies.
+
+# Note: If your company is behind a filtering proxy, you may find that the apt-key command fails for the Docker repo
+# during installation. To work around this, add the key directly using the following:
+
+   $ curl -fsSL https://get.docker.com/gpg | sudo apt-key add -
+     
+\end{verbatim}
+*IN ADDITION*\\In aggiunta se si vuole si può considerare l'opzione di aggiungere il programma docker alla lista dei programmi con privilegi elevati in modo da poterlo eseguire in modalità non root o senza il comando \texttt{sudo} ogni volta:
+\begin{verbatim}
+
+   $	sudo usermod -aG docker <name_of_the_user_to_add>
+  	
+\end{verbatim}  
+Per esempio se si vuole aggiungere l'utente corrente il comando andrà così formattato:
+\begin{verbatim}
+  
+   $  sudo usermod -aG docker `whoami`
+    
+\end{verbatim}
+Ricordati che le modifiche diventeranno effettive solo dopo il logout!\\\\
+*PACKAGE EXTRA RACCOMANDATI*\\
+L'installazione di questi package extra è necessaria se si vuole montare aufs fisibile anche su docker.
+\begin{verbatim}
+
+	$ sudo apt-get update
+	
+	$ sudo apt-get install curl \
+	    linux-image-extra-$(uname -r) \
+	    linux-image-extra-virtual
+
+\end{verbatim}
+DOPO L'INSTALLAZIONE:\\
+procedo con la verifica dell'installazione.\\
+procedere con esercizoio di base.\\
+Verifica che il servizio docker si in essecuzione sulla tua maccchina ad moogni modo per  sicurezza eseguire la seguente sequenza di comandi:
+\begin{verbatim}
+
+	$ sudo service docker status
+
+#next command restart all docker service
+
+	$ sudo service docker restart
+
+\end{verbatim}
+In caso arrivati a questo punto per qualche motivo l'istallazine non sia andata a buon fine si potrebbe provare con questa sequenza di comandi:\\
+1. Set up del repository\\
+Aggiunta di Docker CE repository in Ubuntu. Tramite il seguente comando \texttt{lsb\_release -cs} stampo il nome della mia versione corrente di Ubuntu, esempio "xenial or trusty".
+\begin{verbatim}
+
+sudo apt-get -y install \
+apt-transport-https \
+ca-certificates \
+curl
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+"deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) \
+stable"
+
+sudo apt-get update
+\begin{verbatim}
+2. Get Docker CE
+
+Install the latest version of Docker CE on Ubuntu:
+
+
+sudo apt-get -y install docker-ce
+
+\end{verbatim}
+*Tratto direttamente dalla documentazione originale (causa recenti aggiornamenti della piattaforma è possibile che alcuni comandi per alcune procedure siano variati nel frattempo invito sempre a verificare sulla documentazione).
+\subsubsection{Verifica dell'installazione:}Ora dovremmo essere in grado a lanciare il comando \texttt{doocker run hello-world} e dovremmo ottenere un output tipo questo:
+\begin{verbatim}
+
+	$ docker run hello-world
+	
+	Hello from Docker!
+	This message shows that your installation appears to be working correctly.
+	
+	To generate this message, Docker took the following steps:
+	...(snipped)...
+	
+\end{verbatim}
+Iinfine per motivi di compatibilità e per evitare problemi con l'esecuzione di Swarm in docker sucessivamente, accertiamoci di che la versione sia uguale o superiore alla 13.0 eseguendo  il comando \texttt{docker --version} e se vogliamo maggiori informazioni ppossiamo digitare il comando \texttt{docker info}.
+\begin{verbatim}
+
+	$ docker --version
+	Docker version 17.05.0-ce-rc1, build 2878a85
+
+\end{verbatim}
+Arrivati a questo punto si è pronti per iniziare a sperimentare passsando alla sezione dove creeremo di persona le nostre immagini.
+

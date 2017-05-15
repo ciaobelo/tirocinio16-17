@@ -1,0 +1,158 @@
+Inizialmente controlliamo di aver installato docker e che sia la versione giusta come descritto del capitolo precedente.\\
+1. Step:\\
+Usiamo subito alcuni comandi di base in un semplice esempio alcuni di questi li acciamo già usati:
+\begin{verbatim}
+
+1	$ docker run hello-world
+2	
+3	$ docker --version
+	Docker version 17.05.0-ce-rc1, build 2878a85
+
+\end{verbatim}
+Ora analizziamo brevente cosa è successo quando abbiamo lanciato sulla nosta macchina per la prima volta un container docker.
+Se non ci siamo accorti di averlo fatto è tutto normale, anche perchè non si direbbe che in pochi secondi dal lancio del comando fino allo scaricaricamento dell'immagine dal docker registry alla sua esecuzione sia servito così poco tempo e sia stato così facile.
+Il comando che abbiamo lanciato è stato quello alla riga 2(\texttt{docker run hello-world}).
+questo comando una volta lanciato a detto a docker di eseguire un containe che conteneva un immagine taggata con il nome di "hello-world", questo a fatto si che il sistema in modo automatico è andato nel repo locale delle immagini e ha cercato se era presente un'immagine con un tag di riferimento "hello-world", ma dato che era la prima volta che la usavamo il sistema non l'ha trovata quindi si è connesso al docker-hub e ha cercato l'immagine da noi richiesta in rete. Una volta trovata l'ha scarica in locale sul nostro host e la eseguita restituendonci a video la banale scritta ciao mondo e qualcos'altro.\\
+Esempio di output:
+\begin{verbatim}
+
+	test-VirtualBox test \# docker run hello-world
+	Unable to find image 'hello-world:latest' locally
+	latest: Pulling from library/hello-world
+	78445dd45222: Already exists 
+	Digest: sha256:c5515758d4c5e1e838e9cd307f6c6a0d620b5e07e6f927b07d05f6d12a1ac8d7
+	Status: Downloaded newer image for hello-world:latest
+	
+	Hello from Docker!
+	This message shows that your installation appears to be working correctly.
+	
+	To generate this message, Docker took the following steps:
+	1. The Docker client contacted the Docker daemon.
+	2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+	3. The Docker daemon created a new container from that image which runs the
+	executable that produces the output you are currently reading.
+	4. The Docker daemon streamed that output to the Docker client, which sent it
+	to your terminal.
+	
+	To try something more ambitious, you can run an Ubuntu container with:
+	\$ docker run -it ubuntu bash
+	
+	Share images, automate workflows, and more with a free Docker ID:
+	https://cloud.docker.com/
+	
+	For more examples and ideas, visit:
+	https://docs.docker.com/engine/userguide/
+
+\end{verbatim}
+Tramite il comando (\texttt{docker images}) possiamo visualizzare le immagini salvate sulla memoria locale del nostro host:
+\begin{verbatim}
+
+test-VirtualBox test \#
+	docker images
+	 
+	REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+	<none>              <none>              8ff43252d7f2        7 weeks ago         191.3 MB
+	<none>              <none>              b7a9f1663f67        7 weeks ago         189.3 MB
+	<none>              <none>              7ee09435238b        7 weeks ago         188.3 MB
+	<none>              <none>              8126e3300de2        7 weeks ago         70.85 MB
+	ubuntu              16.04               0ef2e08ed3fa        10 weeks ago        130 MB
+	hello-world         latest              48b5124b2768        3 months ago        1.84 kB
+
+\end{verbatim}
+Tramite il comando (\texttt{docker rmi <REPO:TAG | IMAGE ID> ...}) possiamo eleiminare le immagini salvate sulla memoria locale del nostro calcolatore.\\\\\\
+\begin{verbatim}
+
+test-VirtualBox test \# 
+	docker rmi 8ff43252d7f2 b7a9f1663f67 7ee09435238b 8126e3300de2
+
+Deleted: sha256:8ff43252d7f2b4f84785f139e6135df037e731505fd70fc64d00248cbca15bad
+Deleted: sha256:b656184f7e21b4dfc6de17aa8df42a0fe01a37df82acd0bbd491dbc529f860b1
+	.
+	.
+	.
+Deleted: sha256:7ee09435238ba560fe614d699c33a3532e3ada996ae6c1d9b2d42869525ae3b6
+Deleted: sha256:818754db35602595492ef843a644ec16b985b0ab18582b543edc1b4129e0cde8
+Deleted: sha256:f91bca33aeae5b04e4235f84459dc933b02268862077ff51d2b2ba4f392be940
+==>Error response from daemon: conflict: unable to delete 8126e3300de2 (cannot be forced) - image is being used by running container b3256ad87bc0
+
+test-VirtualBox test \# docker images 
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+<none>              <none>              8126e3300de2        7 weeks ago         70.85 MB
+ubuntu              16.04               0ef2e08ed3fa        10 weeks ago        130 MB
+hello-world         latest              48b5124b2768        3 months ago        1.84 kB
+
+\end{verbatim}
+Nel caso la rimozione dell'immagine non vada a buon fine come nel caso (8126e3300de2) basta aggiunger il flag (\texttt{docker rmi --force <REPO:TAG | IMAGE ID> ...})
+Ecco una breve riassunto dei principali comandi più usati nella gestione di un container.\\
+Una volta installato bisogna far partire il servizio del docker. Su Ubuntu il comando è il seguente:\\
+\texttt{service docker start}\\\\
+Mentre su altre distro esempio RHEL/CentOS sono questi:\\
+\texttt{systemctl enable docker}\\
+\texttt{systemctl start docker}\\
+Vediamo adesso una serie di comandi (per semplicità solo su Ubuntu, per le altre distribuzioni o sistemi operativi basta consultare la documentazione su https://docs.docker.com/) da utilizzare.\\
+\begin{itemize}
+\item Per verificare se docker è stato installato correttamente possiamo lanciare il classico "Hello World":
+\texttt{docker run hello-world}\\
+
+\item Per stoppare il servizio di docker:\\
+\texttt{service docker stop}\\
+
+\item Per cercare un'immagine in Docker Hub:\\
+\texttt{docker search <nome\_immagine>}\\
+
+\item Per scaricare un'immagine da Docker Hub:\\
+\texttt{docker pull <nome\_immagine>}\\
+
+\item Per scaricare un'immagine da un repository di Docker Hub:\\
+\texttt{docker pull <nome\_repository\/nome\_immagine>}\\
+
+ Nei due comandi precedenti si vuole scaricare un'immagine ma non abbiamo indicato il tag, così viene presa l'ultima versione presente dell'immagine. L'uso dei tag viene altamente consigliato perché sono utili soprattutto per l'isolamento e il packaging.\\
+
+\item Il comando con indicazione anche del tag diventa per esempio:\\
+\texttt{docker pull <nome\_repository\/nome\_immagine:tag>}\\
+\texttt{docker pull ventus85/tomcat:8.0.32}\\
+
+\item Per visualizzare l'elenco delle immagini presenti sulla macchina host:\\
+\texttt{docker images}\\
+
+\item Per avviare un nuovo container interattivo che usa la relativa immagine e avvia un terminale all'interno del nuovo container:\\
+\texttt{docker run parametri --name <nome\_container> <nome\_immagine:tag>}\\
+
+\item Per esempio se vogliamo avviare il container per tomcat e vogliamo che utilizzi una determinata porta è necessario fare un forwarding. Per fare la mappatura delle porte si usa il parametro "p" mentre per mappare una cartella il parametro è "v".\\
+\texttt{docker run -it -d --name tomcat -p 8080:8080 -v \/home\/myApp\/tomcat:\/usr\/local\/tomcat\/log ventus85\/tomcat:8.0.32}\\
+
+\item Quando viene avviato un container esso eseguirà un eventuale entry point (ovvero un file chiamato docker\-entrypoint.sh).
+Per avere l'elenco dei container presenti (se aggiungiamo l'opzione -a mostra solo quelli attivi):\\
+\texttt{docker ps -a}\\
+L'elenco dei contanier contiene:\\
+\begin{enumerate}\item l'id del container
+\item il nome del container
+\item il nome dell'immagine
+\item il comando per avviarlo
+\item quando è stato creato
+\item lo stato (per esempio se è "up")
+\item le eventuali porte mappate
+\end{enumerate}
+
+\item Se invece vogliamo eseguire un comando su un container che vogliamo eseguire:\\
+\texttt{docker exec [OPTIONS] <nome\_container> comando [ARG...]}\\
+
+\item Se per esempio vogliamo aprire una shell per poter usare il container con Oracle:\\
+\texttt{docker exec -it oracle bash}\\
+
+\item Per rimuovere un container:\\
+\texttt{docker rm <id\_container>}\\
+
+\item Per rimuovere l'immagine:\\
+\texttt{docker rmi nome\_immagine}\\
+
+\item Per stampare un file di log del container:\\
+\texttt{docker logs <nome\_container>}\\
+
+\item Per avere le informazioni del container (vengono restituite in formato json):\\
+\texttt{docker inspect <nome\_container>}\\
+
+\item Per fare un commit (ovviamente in locale) sulle eventuali modifiche effettuate sul container:\\
+\texttt{docker commit nome\_container nome\_immagine}\\\\
+Questa operazione è utile nel caso si voglia creare una nuova immagine con, per esempio, delle impostazioni diverse rispetto alla precedente.
+\end{itemize}

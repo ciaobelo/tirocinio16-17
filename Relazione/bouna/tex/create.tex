@@ -1,0 +1,6 @@
+Oltre a usare il comando \texttt{commit} per customizzare le nostre immagini e i nostri container è possibile usare il Dockerfile. Esso è un file che crea l'immagine di cui abbiamo bisogno a partire da un'immagine di partenza. Contiene i passaggi da eseguire con il build. La sintassi del docker file è scritta in Ruby più i classici comandi bash.
+Riferimento alla guida ufficiale \href{https://docs.docker.com/engine/reference/builder/}{Dockerfile reference}.\\
+Una volta creato il nostro Dockerfile (oppure modificato uno precedentemente scaricato), il passo successivo è quello di effettuare il build con un comando come il seguente:
+\texttt{docker build -t marco94\/service:fib\_1.0}\\
+* Il nome del repository matteo94 l'ho scielto a scopo didattico solo perchè il repo da me creato in quel momento tra i nick-name quello risultava disponibile.
+Link del repo su bitbicket \href{https://hub.docker.com/r/matteo94/service/}{https://hub.docker.com/r/matteo94/service/}.

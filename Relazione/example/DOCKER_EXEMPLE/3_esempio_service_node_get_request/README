@@ -1,0 +1,61 @@
+COMPILAZIONE creazione
+
+docker built [-t <nome:tag>] <path>
+
+ESECUZIONE
+
+docker run [OPT:es -t -i] <nome:tag> ([<param>] || [<path-excute>])
+
+docker run -t -i ubuntu:latest /bin/bash
+
+GUIDA PER LA COSTRUZINE DI UN DOCKERFILE PERSONALIZZATO
+
+Il Dockerfile è una sorta di  script eseguibile dal comando build interno a docker che ci permette di costruire la nostra immagine personalizzata aggiungendo dei layer "servizi" arricchendo e personalizzando un immagine docker.
+Quindi dobbiamo immaginare un immagine docker come se avesse una struttura a stack dove ogni componente software aggiunto alla base vine aggiunto in cima valorizzando il comportamento dell'immagine con nuove specifiche.
+Esempio di una struttira classica:
+
+
+lay->(n) service
+-
+-(ci possono essere molti livelli di layer ma si consiglia sempre di tenrli limitati)
+-
+lay->(0)immagine di un SO scelto come base, generalmente linux like insieme di servizi tool o applicazioni.
+
+
+A questo punto possiamo andare a capire quali sono le fasi di base essenziali per produerre un Dockerfile personalizzato funzionante e semanticamente corretto.
+
+Elementi fondamentali di base necessari e sinassi.
+
+Sintassi:
+La sintasssi riichiede obbligatoriamente la specifica di due comandi uno  il FROM
+che si deve trovare all'iniizio del file e non si può omettere specifica la immagine di partenza per la creazione della nostra.
+
+Elementi:
+COMMAND <argument>
+
+http://www.html.it/articoli/docker-i-nostri-servizi-in-un-container-a-prova-di-bomba/
+
+GUIDA PER LA CREAZIONE DI UN KIMMAGINE DOCKER 
+COMANDO BUILD
+
+Di base al momento della crazione dell'immagine le fasi per effettuare una build sono 3:
+1-possedere un Dockerfile contenente la struttura che dovrà avere la nuova  immagine
+2-utilizzare il ccomando 
+    doocker build 
+per effettuare la costruzione dell'immagine
+
+Il comando deve essere così formattato in linea di massima per creare un immagine personalizzata.
+
+        docker build -t <nome_image_data> <path>
+
+es.
+        docker build -t my_image .
+
+flag: 
+-t <nome_image_data>
+mi permette di assegnare all'immagine che sto andando a costruire un identificativo personalizzato che  in futuro mi facilitera il riconoscimento di quest'ultima in modo tale che quando dovrò riusarla potrò rintracciarla con facilità viceversa la procedura andrà a buon fine ma l'immagine avrà un nominativo di tipo numerico (es.6b362a9f73eb) difficilmente identificabile in caso di parecchie immagini.
+
+<path> serve per indicare al comando docker build dove andare a reperire il Dockerfile da compilare.
+
+
+

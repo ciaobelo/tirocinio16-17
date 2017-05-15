@@ -1,0 +1,286 @@
+% !TeX spellcheck = en_GB
+
+\documentclass[a4paper,12pt,openright,twoside]{report}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+%\usepackage{showkeys}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{amsthm}
+\usepackage{eucal}
+%\usepackage{eufrak}
+\usepackage{alltt, fancyvrb, url}
+\usepackage{amssymb}
+\usepackage{cleveref}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{wrapfig}
+\usepackage{float}
+
+
+\usepackage{amsmath,amssymb,stmaryrd,mathtools,alltt}
+\usepackage{algorithmic, algorithm}
+\usepackage[utf8]{inputenc}
+\usepackage{fontenc}
+\usepackage{url}
+\usepackage[a4paper=true]{hyperref}
+\usepackage{cleveref,amsmath,amssymb,stmaryrd,mathtools,alltt,algorithm}
+\usepackage{amssymb}
+\usepackage[italian]{babel}
+\linespread{1.3}
+
+\title{Tirocinio curriculare \\svolto presso il\\ DISI - PSLab}
+ 
+\author{Lorenzo Valentini}
+%\date{\today}
+\date{05/28/2017}
+
+\begin{document}
+	
+\maketitle
+
+\begin{abstract}
+		Il tema da me scelto per il tirocinio corrisponde alla proposta B punto 2.\\\\
+	A) Revisione dell'interfaccia grafica 2D/Swing di Alchemist con focus
+	sull'usabilità. Questo integra una serie di passi semi-indipendenti,
+	di cui più se ne fanno meglio è:\\
+	1- stabilizzazione e rilascio del plugin IntelliJ-Alchemist (uscita
+	dallo stadio prototipale con una tesi in completamento)\\
+	2- sistema per la modifica dello stato dei nodi (attualmente molto
+	caotico, è praticamente una proof of concept)\\
+	3- revisione del sistema di creazione e modifica degli effetti\\
+	
+	B) Sperimentazione (studio, installazione e prove) dei seguenti sistemi
+	cloud-oriented (uno su tre, ma anche di più):\\
+	1- Confronto fra Paas Open Source (e.g. Cloud Foundry, AppScale,
+	Tsuru, Apache Stratos …): sviluppo di un’applicazione minimale e deploy
+	su due o più PaaS per confrontarne features, pro e contro di ognuno.\\
+	2- Docker e Container Scheduling: sviluppo di un’applicazione
+	distribuita minimale che sfrutti la containerizzazione e Docker, deploy
+	utilizzando due o più framework di scheduling (e.g Docker Swarm,
+	Kubernetes, Apache Mesos …) per effettuarne un confronto.\\
+	3- Real-Time Data Processing: installazione e prove di strumenti per
+	il processing di dati near real-time , e.g Apache Storm, Kafka, Spark …,\\\\
+	
+	Lo scopo di questo tirocinio è stato incentrato principalmente sull'apprendimento di alcune tecnologie open-sourse  sull'argomento della virtualizzazione di servizi e sistemi utilizzando strumenti per utomatizzare il deploy di questi su varie arcittetture di natura disomogenea riducendo così in questo modo alcune limitazioni e problemi dettati da fattori riguardanti la compatibilità analizzando anche aspetti di ergonomia in campo applicativo.
+	Gli esperimenti condotti con questi strumenti sono stati effettuati in vitro su di un singolo calcolatore dove ogni elemento di un architettura distribuita veniva virtualizato su quest'ultimo.
+
+	Obittivo principale nella fase iniziale è stata quella di acquisire familiarità con gli stumenti e le tecnologie del caso di studio, in modo da individuare tramite una fase di analisi sucessiva pregi e i difetti, dopo di che è stato possibile mediante esercitazioni pratiche reperite direttamente dalla documentazione delle varie teocnologie o prodotti ad-hoc per i test, in modo da valutarne sucessivamente alcuni paramerti. In termini generali si è cercato di valutarne alcune caratteristiche: patricità di utilizzo, difficoltà di installazione e limitazioni o potenzialità che li contraddistinguono uno dall'altro ad esempio caratteristiche riguardanti proprio le loro capacità in alcuni ipotetici casi di studio. Per effettuare i vari test sono stati sviluppati alcuni esempi e script di automazione per alcune operazioni in modo da velocizzare alcuni processi e da testare il reale utilizzo di questi strumenti.
+	
+	
+	\chapter*{Indouzione}
+	Vi fornirò una breve introduzione su che cosa verrà trattato sucessivamente più in dettaglio all'interno di questo report, in modo da darvi subito, un idea chiara su alcuni concetti che verrano trattati nel  corso della documentazione.\\
+	Iniziamo con il descrivere brevemente qual'è il  paradigma architetturale che sta alla base del concetto dei conteiner e quali siano le differenze tra questi e una comune macchina virtuale; poi andremo  più nello specifico applicando ciò visto fino ad ora per capire  come Docker(-whale) applica al suo interno questo pattern architetturale.\\
+	Sucessivamente, dopo aver difatto familiarizzato con  Docker sperimentando in prima persona alcune delle sue funzionalità di base anche tramite l'ausilio di esempi, sarà inoltre possibile estendere il concetto di una singola istanza ad un insieme di istanze, dando così vita al concetto di sciame e di sistema didtribuito  
+	\href{https://it.wikipedia.org/wiki/Cloud_computing}{iaas(infrastructur as a service)}. 
+	Questo non è altro che più istanze di servizi incapsulati in container distribuiti su un cluster di macchine che cooperano grazie al paradigma (master-slave) mettendo in esecuzione una o più istanze di servizi al prorpio interno secondo delle politiche di scheduling per la gestione del carico di lavoro in parte definite dall'utente in parte dipendenti dall'architettura. Non preoccupiamoci se arrivati a questo punto qualche termine ci risulta strano presto cercheremo di fare chiarezza sull'argomento in modo da ottenere risposte hai nostri dubbi.;)
+	
+	 
+\end{abstract}
+
+% mi crea l'indice in modo automatico
+\tableofcontents
+ 
+\chapter{Container}
+La contiua espansione dei sistemi cloud e la neccessità di poter scalare servizi e applicazioni in modi sempre più efficiente ed in tempi più ridotti, ha fatto si che venisse rivisto il concetto di macchine virtuali che venivano usate per svolgere questo lavoro.\\
+Perché virtualizzare un’intera macchina, quando sarebbe possibile isolarne solamente una piccola parte di essa?\\
+Questa idea ha condotto gli sviluppatori a trovare delle strade alternative alla virtualizzazione completa e lo stesso Google, confrontandosi con questo problema, ha sviluppato un’aggiunta al kernel Linux chiamata \href{https://en.wikipedia.org/wiki/Cgroups}{\textbf{cgroups}} chiamato “gruppi di controllo” (control groups, cgroups) che permette di gestire l’accesso alle risorse. I control groups permettono di impostare le quote, impostare le priorità e misurare diversi tipi di risorse, quali: la memoria, l’utilizzo della CPU, gli accessi al disco e così via. Questo modulo ha permesso al team di sviluppo californiano di rilasciare software in maniera più veloce, ed economica e con una scalabilità senza precedenti, permettendogli così di creare un contesto di esecuzione isolato, con un alto livello di astrazione, tanto da imporsi come una sorta di sistema operativo semplificato e virtualizzato sul quale sono basate tutte le applicazioni da loro sviluppate.\\
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.99\columnwidth]{img/c.pdf}
+		\caption{Interpretazione grafica di un container partendo da un layer di base che comprende un immagine di filesystem ubuntu e uno strato che mostra il livello con i layer personalizzati ed infine l'applicativo o il serviziozio che si vuole utilizzare in esecuzione nel container.}
+		\label{img:container}
+	\end{center}
+\end{figure}
+Storicamente, i container sono stati sviluppati nell’ambito del progetto \href{https://linuxcontainers.org/it/lxc/introduction/}{Linux Containers \textbf{LXC}}. Per quanto rappresenti una soluzione valida, \textbf{LXC} non è mai diventata popolare, principalmente per ragioni di usabilità e per la limitata portabilità dei container creati tramite questa tecnologia anche se in alcuni casi specifici preferibili.\\
+Dopo pochi anni dai primi sviluppi di questo nuovo paradigma architetturale, la volontà di rendere questa tecnologia uno standard, ha condotto il team di Docker a sviluppare un formato di contenierizzazione interoperabile, capace di pacchettizzare le applicazioni ed effettuarne il deploy in qualsiasi ambiente di esecuzione, senza doversi preoccupare delle condizioni di eseguibilità vedi figura \ref{img:container}.\\
+Sucessivamente userò in modo del tutto analogo i termini host e server in caso contrario andrò a difefferenziare i concetti nel dettaglio.
+In pratica, la containerizzazione permette di eseguire un qualsiasi \textbf{processo linux} in \textbf{ambiente isolato}.\\
+Quindi avremo che un qualsiasi processo "containerizzato" in esecuzione, avrà un proprio \href{https://it.wikipedia.org/wiki/File_system}{\textbf{\emph{ file system}}} privato completamente indipendente da qualsiasi altro processo linux in esecuzione sullo stesso server.
+Questo tipo di isolamento potrebbe risultare una limitazione ma in realtà è proprio grazie a questa caratteristica che si riesce a sfruttare una peculiarità del kernel linux ovvero il\href{https://en.wikipedia.org/wiki/Linux_namespaces}{\textbf{namespaces}}, per le quali è possibile  le seguenti risorse:\\
+\begin{itemize}
+\item\href{https://it.wikipedia.org/wiki/Comunicazione_tra_processi}{\textbf{Inter Process Communications} (IPC)}
+\item configurazione di rete
+\item il punto di mount della root
+\item l’albero dei processi
+\item gli utenti e i gruppi di essi
+\item la risoluzione del nome di rete
+\end{itemize}
+Senza addentrarsi in eccessivi tecnicismi, il vantaggio principale sta nel fatto che, con l’uso dei namespace, diventa possibile isolare i processi in modo molto efficace.L’unica cosa che il processo isolato nel container condivide con il sistema operativo ospitante è il kernel Linux.\\\\\\\\\\\\
+
+\section{Paradigma architetturale}
+Le differenze sostanziali fra i container e le macchine virtuali sono diverse, entrambe le architeture hanno dei propri pregi e difetti, imputabili all'utilizzo e alle esegenze che essi debbono soddisfare. La creazione di una macchina virtuale è molto diversa da quella di un container poichè lavorano su livelli di astrazione differenti.\\Le VM virtualizzano completamente tutto il sistema dallo strato hardware fino al livello applicativo in modo da andare a ricostruire nel proprio ambiente una vera e propria macchina indipendente dal host su cui essa è ospitata, questa è un'operazione onerosa in termini di tempo e risorse, poichè non banale. Questo fa si che ogni macchina dovrà avere un proprio porzione di memoria centrale, risorse computazionali e un quantitativo di memmoria di massa tutto riservato per e proprie esigenze. Importante portare attenzione al fatto che tutto ciò se per qualche motivo non viene utilizzato rimane allocato per tutto il tempo in cui il sistema virtualizzato rimane in esecuzione privando in questo modo le altre eventuali macchine o applicazioni e servizi in esecuzione sul medesimo server o cluster.\\
+Grazie alla tecnologia dei container che non necessita di dover inglobare tutte le risorse di un server, in particolare il kernel del sistema operativo, i container sono molto più “leggeri” delle macchine virtuali, richiedono poche risorse di CPU e possono essere attivati in pochi istanti. Questo li rende particolarmente adatti alle situazioni in cui il carico di elaborazione da sostenere è fortemente variabile nel tempo con picchi di lavoro.
+Alcuni scenari appalicativi sono la gestione del traffico per siti web di e-commerce o social-media ma anche in molti altri casi dove numeri elevati di utenti accedono simulotanea e si connettono richiedendo l'utilizzo di alcune risorse o servizi, facendo si che i sistemi siano sottoposti a picchi di connessioni in entrata, che se gestiti in mal modo in certe situazioni potrebbero compromettere la stabilità del sistema e cerete volte rappresentare il fallimento di un progetto o semplicemente il malcontento delle utenze. In questi casi grazie alla tecnologia dei container si possono gestire una moltitudine di richieste attivando in qualche frazioni di secondo un numero elevato di macchine anche decine o centinaia di istanze, ciascuna delle quali esegue il proprio compito gestendo una porzione del carico di lavoro. Un esempio lampante lo si ha nel caso di un web server sul quale esegue un web services, ad un certo punto viene contattato da un numero elevato di visitatori in un breve periodo. esempio "offerte last-minute su un e-commerce" .\\
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.99\columnwidth]{img/vm-container.jpg}
+		\caption{Container e VM a confronto con le rispettive architetture.}
+		\label{img:architettura}
+	\end{center}
+\end{figure}
+Detti alcuni vantaggi offerti da questa nuova tecnologia per ora non ancora attiva sul mercato ma principalmente usata in fase sperimentale ma che nel breve periodo si prevede sostituirà le VM in molti scenari applicativi grazie a queste sue caratteristiche.\\\\\\
+I vantaggi della contenierizzazione sono:\\
+Poter contenere un numero elevato di container in esecuzione su una singola macchina.\\
+Deployment semplificato: impacchettando un’applicazione in un singolo componente distribuibile e configurabile con una sola linea di comando, la tecnologia a container permette di semplificare il deployment di qualsiasi applicazione, senza doversi preoccupare della configurazione dell’ambiente di runtime;\\Una disponibilità rapida: virtualizzando ed astraendo solo il sistema operativo e le componenti necessarie all’esecuzione dell’applicazione, invece che l’intera macchina, l’intero package si avvia in un tempo molto ridotto, rispetto ai tempi di avvio di una VM;\\
+Un controllo più granulare: i container consentono agli operatori e agli sviluppatori di suddividere ulteriormente le risorse computazionali in microservizi, garantendo così un controllo superiore sull’eseguibilità delle applicazioni e un miglioramento delle prestazioni dell’intero sistema. Per quanto sia possibile eseguire anche su un laptop diverse virtual machine, questa operazione non è mai veloce e semplice ed impatta sulle sulle prestazioni.\\
+Inoltre traggono vantaggi anche sull’amministrazione dei cicli di rilascio delle applicazioni è semplificato, in quanto distribuire una nuova versione di un container è pari al tempo speso per digitare in console una singola linea di comando.\\
+Le attività di testing traggono un beneficio economico da un ambiente contenierizzato. Se si effettua il test di un’app direttamente su un cloud server in un ambiente di cloud computing pubblico, sarà necessario sostenere i costi relativi ai tempi di occupazione delle risorse computazionali. Questo costo aumenta all’aumentare del numero di test che devono essere eseguiti. Con un container è possibile effettuare una serie di semplici test programmati mantenendo costante il costo, in quanto si userebbero sempre le stesse risorse di calcolo.
+Infine, non si possono ignorare i guadagni in termini di componibilità dei sistemi applicativi, specialmente per le applicazioni open source. In pratica, invece di obbligare gli sviluppatori a installare e configurare i più disparati servizi che potrebbero richiedere molto tempo in termini di messa in installazione come per esempio MySQL, memcached, MongoDB, nginx, node.js e via discorrendo, per avere la giusta piattaforma esecutiva per le proprie applicazioni, sarebbe meno rischioso e più veloce avviare ed eseguire con piccoli script quei pochi container che ospitano queste stesse applicazioni.
+Sul lungo periodo, il più importante vantaggio che questa tecnologia promette è la portabilità e la consistenza di un formato che consente l’esecuzione applicativa su diversi host. Infatti, con la standardizzazione dei container, i workload possono essere facilmente spostati lì dove vengono eseguiti in modo più economico e veloce, evitando anche i lock-in (blocchi  e rallentamenti) dovuti alle peculiarità delle piattaforme dei singoli provider.\\Breve panoramica per avere un quadro completo sul fatto che esistono anche container in ambiente Windows, si distinguono in due diversi tipi:
+
+Windows Server Container: forniscono uno strato di isolamento tra gli applicativi usando tecnologie basate sui namespace e la separazione dei processi, ma condividono il kernel tra tutti i container in esecuzione sullo stesso host.
+
+Hyper-V Container: eseguono ogni container in una macchina virtuale ottimizzata, in cui viene eseguita una diversa istanza del kernel non condivisa con gli altri container Hyper-V.\\ 
+Il tipo di container utilizzato ha implicazioni anche sul costo della licenza Windows Server.
+\subsection{Container vs. Virtual Machine}
+In questo caso introduciamo per l'esempio facendo riferimento al modelo architetturale si docker.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.99\columnwidth]{img/ContainersOperations-2_fig03.jpg}
+		\caption{Container vs. Virtual Machine..}
+		\label{img:arch_comp}
+	\end{center}
+\end{figure}
+Come è possibile vedere nella figura \ref{img:arch_comp}, i vantaggi principali dei container si riassumono in un minore consumo di memoria e spazio disco. I container usano meno memoria poiché tutti i container in un ambiente ospitante condividono lo stesso kernel. I container usano meno spazio su disco poiché le immagini dei container possono essere condivise da container che sono in esecuzione sullo stesso host.\\
+Dal punto di vista della sicurezza, il consenso generale sembra essere a favore delle macchine virtuali. Infatti le virtual machine appaiono più sicure e più isolate rispetto ai container, ma visto il rapido sviluppo si presume che anche questo cambierà con la progressiva maturazione della tecnologia container.
+\section{Docker}
+\input{tex/docker.tex}
+\subsubsection{Cenni sulla struttura del FS}
+\textbf{Union File System}:
+\input{tex/union.tex}
+\section{Istallare Docker}
+\input{tex/install.tex}
+\section{Creare un container con Docker}
+\input{tex/introContainer.tex}
+\subsection{Che cos'è il Dockerfile}
+\input{tex/create.tex}
+\subsubsection{Come scrivere in semplicità un Dockerfile}
+\input{tex/dockerfile.tex}
+\chapter{Container orchestration}
+Il progetto Docker è nato con l’obiettivo di semplificare la creazione e la gestione di container. Docker svolge questi compiti in modo molto efficace e va riconosciuto al team che l’ha creato la capacità di mantenere l’ambito di questo progetto chiaro e limitato. Docker è un mattone per costruire dei sistemi cloud basati su container.
+
+Costruire un ambiente cloud basato su container implica di tenere presenti alcune aree principali:
+\begin{itemize}
+\item container scheduling
+\item networking avanzato
+\item sicurezza
+\item monitoraggio
+\item quote e misurazioni
+\end{itemize}
+Vediamo di seguito questi diversi aspetti.
+\input{tex/container_scheduling.tex}
+\section{Swarm embedded in Docker}
+\input{tex/swarm.tex}
+\section{Apache MESOS}
+\input{tex/mesos.tex}
+\section{kubernetes}
+\input{tex/kubernetes.tex}
+
+%Si può scrivere in \\
+%c{grassetto},\\
+%\textsc{maiuscoletto}\\
+%, in 
+%\textit{corsivo},
+% \emph{enfatizzato} 
+% (ovvero sceglie 
+% \LaTeX in base al testo che lo circonda), 
+% \underline{sottolineato}, 
+% \texttt{equispaziato}
+%  (ottimo per il codice, ad esempio 
+%  \texttt{public static void main(String[] a)})
+%
+%\begin{verbatim}
+%clear
+%clc
+%TA=EMGDATA1(1,:);
+%GC_filtrato=filtfilt(num,den,GC_abs);
+%figure(3);
+%plot(TA_filtrato)
+%figure(4);
+%plot(GC_filtrato)
+%for i=1:151
+%    EMG_GC_filtrato(1,i)=mean(GC_filtrato(:,(100*(i-1)+1):(100*i)));
+%end
+%\end{verbatim}
+%
+%\tiny
+%tiny
+%
+%\scriptsize
+%scriptsize
+%
+%\footnotesize
+%footnotesize
+%
+%\small
+%small
+%
+%\normalsize
+%normalsize (default)
+%
+%\large
+%large
+%
+%\Large
+%Large (capital "L")
+%
+%\LARGE
+%LARGE (all caps)
+%
+%\huge
+%huge
+%
+%\Huge
+%Huge (capital "H")
+%
+%\normalsize
+%\begin{equation}
+%a_i^n
+%\end{equation}
+
+
+% scegli lo stile, e la bibliografia è gratis
+\bibliographystyle{abbrv}
+% questo file deve contenere i bibtex.
+
+
+\bibliography{}
+
+\Large
+Documenti di riferimento:\\
+\normalsize$- Docker virtualization admin guide.$ (reperoibile in doc/Docker-for-Virtualization-Admin-eBook.pdf)\\
+$- Nist definizione di cloud computing.$ (reperibile in/doc/nist-traduzione.pdf)\\
+
+\Large
+Siti di riferimento:\\
+\normalsize
+\label{dockerRegister}\href{http://blog.octo.com/en/docker-registry-first-steps/}{- Primi passi con i registry di Docker}\\
+\href{https://it.wikipedia.org/wiki/Docker}{$- https://it.wikipedia.org/wiki/Docker$}\\
+\label{nameSpace}\href{http://goo.gl/hLLCoc}{$- http://goo.gl/hLLCoc$}\\
+\href{https://it.wikipedia.org/wiki/Comunicazione_tra_processi}{$- https://it.wikipedia.org/wiki/Comunicazione_tra_processi$}\\
+\label{LXC}\href{https://it.wikipedia.org/wiki/LXC}{$- https://it.wikipedia.org/wiki/LXC$}\\
+\href{https://it.wikipedia.org/wiki/Cloud_computing}{$- https://it.wikipedia.org/wiki/Cloud_computing$}\\
+\href{$http://www.cloudtalk.it/container-cosa-sono-come-funzionano$}{$- http://www.cloudtalk.it/container-cosa-sono-come-funzionano$}\\
+\href{http://www.cwi.it/data-center/virtualizzazione/container-cosa-funzionano-virtualizzazione-86516}{$- http://www.cwi.it/data-center/virtualizzazione/container-cosa-funzionano-virtualizzazione-86516$}\\
+
+Altri link utili/interessanti:\\
+https://it.wikipedia.org/wiki/Docker\\
+https://en.wikipedia.org/wiki/Docker\_(software)\\
+https://www.zoomingin.net/installiamo-docker-su-ubuntu/\\
+http://www.html.it/articoli/docker-i-nostri-servizi-in-un-container-a-prova-di-bomba/\\
+http://www.html.it/articoli/vagrant-virtualizzazione-e-provisioning-senza-sforzo/\\
+https://www.docker.com/what-docker\\
+https://www.docker.com/\\
+https://www.miamammausalinux.org/2017/01/giochiamo-con-docker/\\
+https://github.com/tianon/docker-brew-ubuntu-core/blob/8ec739cf49ac7fb7517d9ba97b04216dc8d8459b/xenial/Dockerfile\\
+
+\Large
+Video tutorial di riferimento:
+\normalsize\\
+\href{https://www.youtube.com/watch?v=VeiUjkiqo9E#t=60}{$- https://www.youtube.com/watch?v=VeiUjkiqo9E\#t=60$}\\
+
+\end{document}
