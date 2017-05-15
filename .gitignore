@@ -1,3 +1,16 @@
+Relazione/buona/tex
+Relazione/buona/img
+Relazione/buona/*.aux
+Relazione/buona/*.bbl
+Relazione/buona/*.blg
+Relazione/buona/*.log
+Relazione/buona/*.out
+Relazione/buona/*.gz
+Relazione/buona/*.tex
+Relazione/buona/*.toc
+Relazione/buona/*.bib
+Relazione/buona/*.zip
+Relazione/buona/*.toc
 virtualBoxImage/
 #Relazione/
 Relazione/img
