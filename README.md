@@ -14,3 +14,4 @@ This README would normally document whatever steps are necessary to get your app
 
 * Registro e calendario delle presenze.
 * Documentazione prodotta nel corso del tirocinio.
+* Link pubblico repo esempi: https://github.com/ciaobelo/tirocinio16-17.git
